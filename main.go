@@ -2,7 +2,6 @@ package main
 
 import (
 	"bufio"
-	"fmt"
 	"os"
 
 	medium "github.com/medium/medium-sdk-go"
@@ -53,9 +52,6 @@ func run(c *cli.Context) error {
 	title := c.String("title")
 	file := c.String("file")
 	isDraft := c.Bool("draft")
-	fmt.Println(title)
-	fmt.Println(file)
-	fmt.Println(isDraft)
 	return publish(title, file, isDraft)
 }
 
@@ -135,7 +131,5 @@ func parseYaml(metayml string) (metadata, error) {
 	if err != nil {
 		return m, err
 	}
-	fmt.Println(metayml)
-	fmt.Println(m)
 	return m, nil
 }
