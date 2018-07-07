@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"os"
 
 	medium "github.com/medium/medium-sdk-go"
@@ -50,20 +51,21 @@ func publish(title string, file string, isDraft bool) error {
 
 	// empty means current user
 	u, err := m.GetUser("")
-	panicOnErr(err)
+	if err != nil {
+		return err
+	}
+
+	var status medium.PublishStatus = medium.PublishStatusPublic
+	if isDraft {
+		status = medium.PublishStatusDraft
+	}
 
 	_, err = m.CreatePost(medium.CreatePostOptions{
 		UserID:        u.ID,
-		Title:         "Title",
+		Title:         title,
 		Content:       "<h2>Title</h2><p>Content</p>",
 		ContentFormat: medium.ContentFormatHTML,
-		PublishStatus: medium.PublishStatusPublic,
+		PublishStatus: status,
 	})
-	panicOnErr(err)
-}
-
-func panicOnErr(err error) {
-	if err != nil {
-		panic(err)
-	}
+	return err
 }
