@@ -37,10 +37,6 @@ func flags() []cli.Flag {
 			Usage: "if this flag is true, files will be published as draft.",
 		},
 		cli.StringFlag{
-			Name:  "title",
-			Usage: "specify title",
-		},
-		cli.StringFlag{
 			Name:  "file",
 			Usage: "specify file path",
 		},
