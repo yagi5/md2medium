@@ -30,6 +30,7 @@ func main() {
 	app.Run(os.Args)
 }
 
+// flags cli flags
 func flags() []cli.Flag {
 	flags := []cli.Flag{
 		cli.BoolFlag{
@@ -44,6 +45,7 @@ func flags() []cli.Flag {
 	return flags
 }
 
+// run entry point
 func run(c *cli.Context) error {
 	title := c.String("title")
 	file := c.String("file")
@@ -51,6 +53,7 @@ func run(c *cli.Context) error {
 	return publish(title, file, isDraft)
 }
 
+// publish
 func publish(title string, file string, isDraft bool) error {
 	m := medium.NewClientWithAccessToken(os.Getenv("MEDIUM_ACCESS_TOKEN"))
 
@@ -80,6 +83,8 @@ func publish(title string, file string, isDraft bool) error {
 	return err
 }
 
+// readFile
+// parse given file and return entry
 func readFile(path string) (entry, error) {
 	var e entry
 	var m metadata
@@ -121,6 +126,7 @@ func readFile(path string) (entry, error) {
 	return e, nil
 }
 
+// parse header metadata yaml
 func parseYaml(metayml string) (metadata, error) {
 	m := metadata{}
 	err := yaml.Unmarshal([]byte(metayml), &m)
