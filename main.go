@@ -1,11 +1,13 @@
 package main
 
 import (
+	"bufio"
 	"fmt"
 	"os"
 
 	medium "github.com/medium/medium-sdk-go"
 	"github.com/urfave/cli"
+	yaml "gopkg.in/yaml.v2"
 )
 
 type entry struct {
@@ -70,13 +72,70 @@ func publish(title string, file string, isDraft bool) error {
 	if isDraft {
 		status = medium.PublishStatusDraft
 	}
+	entry, err := readFile(file)
+	if err != nil {
+		return err
+	}
 
 	_, err = m.CreatePost(medium.CreatePostOptions{
 		UserID:        u.ID,
-		Title:         title,
-		Content:       "<h2>Title</h2><p>Content</p>",
-		ContentFormat: medium.ContentFormatHTML,
+		Title:         entry.metadata.Title,
+		Content:       entry.content,
+		ContentFormat: medium.ContentFormatMarkdown,
 		PublishStatus: status,
+		Tags:          entry.metadata.Tags,
 	})
 	return err
+}
+
+func readFile(path string) (entry, error) {
+	var e entry
+	var m metadata
+	file, err := os.Open(path)
+	if err != nil {
+		return e, err
+	}
+	defer file.Close()
+
+	scanner := bufio.NewScanner(file)
+
+	var metayml string
+	index := 1
+	for scanner.Scan() {
+		// skip first line
+		if index == 1 {
+			index++
+			continue
+		}
+		if scanner.Text() == "---" {
+			break
+		}
+		metayml += scanner.Text() + "\n"
+		index++
+	}
+
+	var content string
+	for scanner.Scan() {
+		content += scanner.Text() + "\n"
+	}
+
+	m, err = parseYaml(metayml)
+	if err != nil {
+		return e, err
+	}
+	e.content = content
+	e.metadata = m
+
+	return e, nil
+}
+
+func parseYaml(metayml string) (metadata, error) {
+	m := metadata{}
+	err := yaml.Unmarshal([]byte(metayml), &m)
+	if err != nil {
+		return m, err
+	}
+	fmt.Println(metayml)
+	fmt.Println(m)
+	return m, nil
 }
