@@ -96,8 +96,10 @@ func readFile(path string) (entry, error) {
 
 	scanner := bufio.NewScanner(file)
 
+	// start scanning yaml
 	var metayml string
 	index := 1
+
 	for scanner.Scan() {
 		// skip first line
 		if index == 1 {
@@ -111,6 +113,7 @@ func readFile(path string) (entry, error) {
 		index++
 	}
 
+	// start scanning content
 	var content string
 	for scanner.Scan() {
 		content += scanner.Text() + "\n"
