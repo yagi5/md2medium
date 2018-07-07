@@ -1,7 +1,6 @@
 package main
 
 import (
-	"log"
 	"os"
 
 	medium "github.com/medium/medium-sdk-go"
@@ -12,9 +11,7 @@ func main() {
 
 	// empty means current user
 	u, err := m.GetUser("")
-	if err != nil {
-		log.Fatal(err)
-	}
+	panicOnErr(err)
 
 	_, err = m.CreatePost(medium.CreatePostOptions{
 		UserID:        u.ID,
@@ -23,7 +20,11 @@ func main() {
 		ContentFormat: medium.ContentFormatHTML,
 		PublishStatus: medium.PublishStatusPublic,
 	})
+	panicOnErr(err)
+}
+
+func panicOnErr(err error) {
 	if err != nil {
-		log.Fatal(err)
+		panic(err)
 	}
 }
