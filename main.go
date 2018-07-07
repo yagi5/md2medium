@@ -8,6 +8,17 @@ import (
 	"github.com/urfave/cli"
 )
 
+type entry struct {
+	metadata metadata
+	content  string
+}
+
+type metadata struct {
+	Title string   `yaml:"title"`
+	Date  string   `yaml:"date"`
+	Tags  []string `yaml:"tags"`
+}
+
 func main() {
 	app := cli.NewApp()
 	app.Name = "md2medium"
